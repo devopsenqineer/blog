@@ -3,7 +3,7 @@ layout: post
 title: tech stack
 description: tech stack
 summary: summary about my tech stack
-tags: introduction
+tags: technology
 minute: 1
 ---
 
