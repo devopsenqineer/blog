@@ -32,7 +32,6 @@ To automate tasks on computers or servers, Ansible works in a series of steps:
 
 - **Agentless automation**: Ansible is agentless and can therefore manage nodes without the need to install any software on them. Ansible uses the SSH protocol to connect to servers and perform tasks.
 
-#
 
 ### YAML
 
@@ -46,11 +45,10 @@ And I will teach you how to write your own Windows based Ansible modules.
 This Task installs the IIS. 
 
 ```yaml
-# Doc: https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_feature_module.html
-
 - name: Install IIS (Web-Server only)
   ansible.windows.win_feature:
     name: Web-Server
     state: present
 ```
 
+Documentation: https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_feature_module.html
