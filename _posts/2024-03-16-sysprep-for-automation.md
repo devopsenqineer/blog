@@ -9,8 +9,6 @@ minute: 7
 
 # How to use sysprep for automation?
 
-### How to use sysprep for automation?
-
 ### What is sysprep actually?
 
 Sysprep stands for system preparation. It is a tool that is integrated within Windows operating systems. It prepares a Windows client or a Windows server to remove specific information from the Windows operating system, e.g. the existing SID is deleted. By running sysprep, the image can be used to be installed on multiple instances. 
@@ -25,13 +23,11 @@ The following functions are very helpful:
 
 - **Add an answer file (unattend)**: Allows you to add an answer file to the existing operating system.
 
-
 ### And how can I use sysprep for automation now?
 
 First, I'll give some context as to why you can and should use sysprep.
 **Following scenario:**
 Based on my Terraform project (https://github.com/devopsenqineer/terraform) which creates virtual machines in a Hyper-V environment, assigns the hostname and IP addresses through scripts, there was the following problem: The domain join was not possible because the machines used **all** had the same SID. As a result, I received an error message that this was not possible due to the multiple SID. 
-
 
 ***Possible solution***:
 
@@ -62,8 +58,6 @@ I will briefly explain how to use the answer file and sysprep:
     ```
 
 - **4th step:** As the last step and actually one of the **most important** steps: Do **NOT** boot the virtual machine. The virtual machine should now be exported and only started up after successful export and, if necessary, copying of the virtual machine. 
-
-
 
 ## Code of the answer file
 
