@@ -15,55 +15,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-
-      # Gemfile verifizieren
-      - name: Verify Gemfile
-        run: |
-          echo "Gemfile contents:"
-          cat Gemfile
-          echo "Ruby version:"
-          ruby -v
-          echo "Bundler version:"
-          bundle -v
-
-      # Dependencies installieren
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          rm -f Gemfile.lock
-          bundle install
-
+          # Install required dependencies
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev libreadline-dev zlib1g-dev
+          # Install ruby-build to install Ruby
+          sudo apt-get install -y ruby-build
+          # Install Ruby 3.1.4
+          ruby-build 3.1.4 /opt/hostedtoolcache/Ruby/3.1.4/x64
+          # Mark installation as complete
+          touch /opt/hostedtoolcache/Ruby/3.1.4/x64.complete
+      - name: Setup bundler
+        run: |
+          gem install bundler
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v4
-
-      # Jekyll Build
+        uses: actions/configure-pages@v3
       - name: Build with Jekyll
-        run: bundle exec jekyll build
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
-
-      # Verify Build
-      - name: Verify Build
-        run: |
-          echo "Contents of _site directory:"
-          ls -la _site/
-          
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '_site'
+        uses: actions/upload-pages-artifact@v2
 
+  # Deployment job
   deploy:
     environment:
       name: github-pages
@@ -73,4 +55,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v2
