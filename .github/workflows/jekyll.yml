@@ -26,11 +26,12 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1.4'  # Stelle sicher, dass Ruby 3.1.4 verwendet wird
-          bundler-cache: true  # Automatisches Caching der Bundler-Installation
+          ruby-version: '3.1.4'
+          bundler-cache: true
 
       - name: Install dependencies
         run: |
+          bundle config unset deployment  # Verhindert den Deployment Mode
           bundle install --jobs 4 --retry 3
 
       - name: Build with Jekyll
