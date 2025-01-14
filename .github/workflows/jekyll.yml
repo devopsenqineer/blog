@@ -1,43 +1,66 @@
-name: Build and Deploy Jekyll Site
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Deploy Jekyll site to Pages
+
 on:
+  # Runs on pushes targeting the default branch
   push:
-    branches: [ main, master ]  # Führt den Workflow bei Pushes auf main oder master aus
-  workflow_dispatch:  # Erlaubt manuelles Auslösen des Workflows
+    branches: ["master"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-22.04  # Nutzt die stabile Ubuntu-Version
-    permissions:
-      contents: write  # Notwendig für Deployment auf GitHub Pages
-    
+  # Build job
+  build:
+    runs-on: ubuntu-22.04  # Changed from latest to specific version
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        
+      - name: Checkout
+        uses: actions/checkout@v4  # Updated to v4
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1  # Using stable version tag
         with:
-          ruby-version: '3.2'
-          bundler-cache: true  # Cached gemfile dependencies
-          
-      - name: Setup Jekyll
+          ruby-version: '3.2'  # Updated Ruby version
+          bundler-cache: true
+          cache-version: 1  # Incremented cache version
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4  # Updated to v4
+      - name: Build with Jekyll
+        # Outputs to the './_site' directory by default
         run: |
-          gem install bundler
           bundle install
-          
-      - name: Build Site
-        run: bundle exec jekyll build
+          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
-          
+      - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
+        uses: actions/upload-pages-artifact@v3  # Updated to v3
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04  # Changed from latest to specific version
+    needs: build
+    steps:
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site  # Der Ordner mit den generierten Dateien
-          publish_branch: gh-pages  # Branch für GitHub Pages
-          enable_jekyll: false  # Jekyll wird bereits im Build-Schritt ausgeführt
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: ${{ github.event.head_commit.message }}
-          force_orphan: true  # Hält den gh-pages Branch sauber
+        id: deployment
+        uses: actions/deploy-pages@v3  # Updated to v3
