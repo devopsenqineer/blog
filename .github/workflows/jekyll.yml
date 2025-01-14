@@ -28,10 +28,10 @@ jobs:
           sudo apt-get install -y libssl-dev libreadline-dev zlib1g-dev
           # Install ruby-build to install Ruby
           sudo apt-get install -y ruby-build
-          # Install Ruby 3.1.4
-          ruby-build 3.1.4 /opt/hostedtoolcache/Ruby/3.1.4/x64
+          # Install Ruby 3.1.3
+          ruby-build 3.1.3 /opt/hostedtoolcache/Ruby/3.1.3/x64
           # Mark installation as complete
-          touch /opt/hostedtoolcache/Ruby/3.1.4/x64.complete
+          touch /opt/hostedtoolcache/Ruby/3.1.3/x64.complete
       - name: Setup bundler
         run: |
           gem install bundler
