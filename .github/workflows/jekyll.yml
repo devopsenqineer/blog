@@ -29,9 +29,9 @@ jobs:
           ruby-version: '3.1.4'
           bundler-cache: true
 
-      - name: Install dependencies
+      - name: Install dependencies without deployment mode
         run: |
-          bundle config unset deployment  # Verhindert den Deployment Mode
+          bundle config unset deployment  # Entferne den Deployment-Modus
           bundle install --jobs 4 --retry 3
 
       - name: Build with Jekyll
