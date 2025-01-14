@@ -27,47 +27,42 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v4
-        with:
-          enablement: true
-
-      # Debug-Informationen
-      - name: Debug Info
+      # Gemfile verifizieren
+      - name: Verify Gemfile
         run: |
+          echo "Gemfile contents:"
+          cat Gemfile
           echo "Ruby version:"
           ruby -v
           echo "Bundler version:"
           bundle -v
-          echo "Jekyll version:"
-          bundle exec jekyll -v
-          echo "Working directory contents:"
-          ls -la
-          echo "Gemfile contents:"
-          cat Gemfile
 
-      # Explizite Installation der benötigten Gems
+      # Dependencies installieren
       - name: Install dependencies
         run: |
-          bundle config path vendor/bundle
+          rm -f Gemfile.lock
           bundle install
 
-      # Build mit detaillierten Ausgaben
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+
+      # Jekyll Build
       - name: Build with Jekyll
-        run: |
-          bundle exec jekyll build --trace
-          echo "Contents of _site directory:"
-          ls -la _site/
+        run: bundle exec jekyll build
         env:
           JEKYLL_ENV: production
 
-      # Explizites Upload mit spezifischem Artifact-Namen
+      # Verify Build
+      - name: Verify Build
+        run: |
+          echo "Contents of _site directory:"
+          ls -la _site/
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '_site'
-          name: github-pages
 
   deploy:
     environment:
@@ -79,5 +74,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
-        with:
-          artifact_name: github-pages
