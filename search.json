@@ -1,0 +1,48 @@
+[
+  
+    {
+      "title"    : "sysprep for automation",
+      "description" : "automation using sysprep",
+      "category" : "",
+      "tags"     : "automation",
+      "url"      : "/blog/2024/03/16/sysprep-for-automation",
+      "date"     : "2024-03-16 00:00:00 +0100"
+    } ,
+  
+    {
+      "title"    : "introduction into ansible",
+      "description" : "introduction for ansible",
+      "category" : "",
+      "tags"     : "ansible",
+      "url"      : "/blog/2024/03/10/ansible-introduction",
+      "date"     : "2024-03-10 00:00:00 +0100"
+    } ,
+  
+    {
+      "title"    : "roadmap about the blog topics",
+      "description" : "roadmap for my blog",
+      "category" : "",
+      "tags"     : "roadmap",
+      "url"      : "/blog/2024/03/05/roadmap-blog-topics",
+      "date"     : "2024-03-05 00:00:00 +0100"
+    } ,
+  
+    {
+      "title"    : "tech stack",
+      "description" : "tech stack",
+      "category" : "",
+      "tags"     : "technology",
+      "url"      : "/blog/2024/03/05/my-tech-stack",
+      "date"     : "2024-03-05 00:00:00 +0100"
+    } ,
+  
+    {
+      "title"    : "Introduction to my blog",
+      "description" : "introduction to my blog included the topics i will write about",
+      "category" : "",
+      "tags"     : "introduction",
+      "url"      : "/blog/2024/03/05/introduction-to-my-blog",
+      "date"     : "2024-03-05 00:00:00 +0100"
+    } 
+  
+]

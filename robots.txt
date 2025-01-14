@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://devopsenqineer.github.io/sitemap.xml

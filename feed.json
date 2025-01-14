@@ -1,0 +1,140 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "cloud blog",
+    "home_page_url": "https://devopsenqineer.github.io/blog/",
+    "feed_url": "https://devopsenqineer.github.io/blog/feed.json",
+    "description": "just a minimalist cloud and devops related blog",
+    "icon": "https://devopsenqineer.github.io/blog/apple-touch-icon.png",
+    "favicon": "https://devopsenqineer.github.io/blog/favicon.ico",
+    "expired": false,
+    
+    "author":  {
+        "name": "devopsenqineer",
+        "url": null,
+        "avatar": null
+    },
+    
+"items": [
+    
+        {
+            "id": "https://devopsenqineer.github.io/blog/2024/03/16/sysprep-for-automation",
+            "title": "sysprep for automation",
+            "summary": "automation using sysprep",
+            "content_text": "How to use sysprep for automation?What is sysprep actually?Sysprep stands for system preparation. It is a tool that is integrated within Windows operating systems. It prepares a Windows client or a Windows server to remove specific information from the Windows operating system, e.g. the existing SID is deleted. By running sysprep, the image can be used to be installed on multiple instances.Which functions are good about sysprep?The following functions are very helpful:      Removes specific information: It removes specific information and especially the SID.        Uninstalls drivers: Uninstalls drivers, but does not remove them        Add an answer file (unattend): Allows you to add an answer file to the existing operating system.  And how can I use sysprep for automation now?First, I’ll give some context as to why you can and should use sysprep.Following scenario:Based on my Terraform project (https://github.com/devopsenqineer/terraform) which creates virtual machines in a Hyper-V environment, assigns the hostname and IP addresses through scripts, there was the following problem: The domain join was not possible because the machines used all had the same SID. As a result, I received an error message that this was not possible due to the multiple SID.Possible solution:Through research, I came across the integrated tool sysprep. Through a conversation with a colleague at work, the possibility of sysprep was explained to me in more detail, as I was not familiar with it at the time.I continued to read and familiarize myself with sysprep and needed several test runs to get the desired result. In addition, it was previously difficult to activate WinRM (Windows Remote Management).I had to use a Powershell script to activate WinRM which can be found under the link (https://gist.github.com/tdigangi5/85b0b3bb5f7b35c7b829828928f22cdd). Since I had to run this script every time on a new machine to activate WinRM, it was worth considering putting it in an answer file.Through intensive research I found parts for the answer file and will share them with you. This answer file can still be revised and further perfected.## Explanation for the answer file:I will briefly explain how to use the answer file and sysprep:      1st step: Change the user and password within the answer file, and adjust the path for the PowerShell script for WinRM.        2nd step: Then save the answer file in the sysprep folder. I have named the answer file deploy.xml.    The path is as follows: “C:\\Windows\\System32\\Sysprep”.        Step 3:** The last step is to open a cmd window and enter the following command:      C:\\Windows\\System32\\Sysprep\\sysprep.exe /generalize /shutdown /oobe /unattend: \"C:\\Windows\\System32\\Sysprep\\deploy.xml\"         4th step: As the last step and actually one of the most important steps: Do NOT boot the virtual machine. The virtual machine should now be exported and only started up after successful export and, if necessary, copying of the virtual machine.  Code of the answer file&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;unattend xmlns=\"urn:schemas-microsoft-com:unattend\"&gt;   &lt;settings pass=\"oobeSystem\"&gt;      &lt;component xmlns:wcm=\"http://schemas.microsoft.com/WMIConfig/2002/State\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" name=\"Microsoft-Windows-Shell-Setup\" processorArchitecture=\"amd64\" publicKeyToken=\"31bf3856ad364e35\" language=\"neutral\" versionScope=\"nonSxS\"&gt;         &lt;UserAccounts&gt;            &lt;AdministratorPassword&gt;               &lt;Value&gt;Password12345&lt;/Value&gt;               &lt;PlainText&gt;true&lt;/PlainText&gt;            &lt;/AdministratorPassword&gt;         &lt;/UserAccounts&gt;         &lt;AutoLogon&gt;            &lt;Username&gt;Administrator&lt;/Username&gt;            &lt;Enabled&gt;true&lt;/Enabled&gt;            &lt;LogonCount&gt;1&lt;/LogonCount&gt;            &lt;Password&gt;               &lt;Value&gt;Password12345&lt;/Value&gt;               &lt;PlainText&gt;true&lt;/PlainText&gt;            &lt;/Password&gt;         &lt;/AutoLogon&gt;         &lt;FirstLogonCommands&gt;            &lt;SynchronousCommand wcm:action=\"add\"&gt;               &lt;Order&gt;1&lt;/Order&gt;               &lt;CommandLine&gt;reg.exe add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\" /v AutoLogonCount /t REG_DWORD /d 0 /f&lt;/CommandLine&gt;            &lt;/SynchronousCommand&gt;            &lt;SynchronousCommand wcm:action=\"add\"&gt;               &lt;Order&gt;2&lt;/Order&gt;               &lt;CommandLine&gt;powershell.exe -File \"C:\\{PathToYourScriptOnTheHost}\\winrm.ps1\"&lt;/CommandLine&gt;            &lt;/SynchronousCommand&gt;         &lt;/FirstLogonCommands&gt;         &lt;OOBE&gt;            &lt;HideEULAPage&gt;true&lt;/HideEULAPage&gt;            &lt;HideLocalAccountScreen&gt;true&lt;/HideLocalAccountScreen&gt;            &lt;HideOEMRegistrationScreen&gt;true&lt;/HideOEMRegistrationScreen&gt;            &lt;HideOnlineAccountScreens&gt;true&lt;/HideOnlineAccountScreens&gt;            &lt;HideWirelessSetupInOOBE&gt;true&lt;/HideWirelessSetupInOOBE&gt;            &lt;NetworkLocation&gt;Other&lt;/NetworkLocation&gt;            &lt;ProtectYourPC&gt;3&lt;/ProtectYourPC&gt;            &lt;SkipMachineOOBE&gt;true&lt;/SkipMachineOOBE&gt;            &lt;SkipUserOOBE&gt;true&lt;/SkipUserOOBE&gt;            &lt;UnattendEnableRetailDemo&gt;false&lt;/UnattendEnableRetailDemo&gt;         &lt;/OOBE&gt;      &lt;/component&gt;   &lt;/settings&gt;&lt;/unattend&gt;Thanks for reading my blog.",
+            "content_html": "<h1 id=\"how-to-use-sysprep-for-automation\">How to use sysprep for automation?</h1><h3 id=\"what-is-sysprep-actually\">What is sysprep actually?</h3><p>Sysprep stands for system preparation. It is a tool that is integrated within Windows operating systems. It prepares a Windows client or a Windows server to remove specific information from the Windows operating system, e.g. the existing SID is deleted. By running sysprep, the image can be used to be installed on multiple instances.</p><h3 id=\"which-functions-are-good-about-sysprep\">Which functions are good about sysprep?</h3><p>The following functions are very helpful:</p><ul>  <li>    <p><strong>Removes specific information</strong>: It removes specific information and especially the SID.</p>  </li>  <li>    <p><strong>Uninstalls drivers</strong>: Uninstalls drivers, but does not remove them</p>  </li>  <li>    <p><strong>Add an answer file (unattend)</strong>: Allows you to add an answer file to the existing operating system.</p>  </li></ul><h3 id=\"and-how-can-i-use-sysprep-for-automation-now\">And how can I use sysprep for automation now?</h3><p>First, I’ll give some context as to why you can and should use sysprep.<strong>Following scenario:</strong>Based on my Terraform project (https://github.com/devopsenqineer/terraform) which creates virtual machines in a Hyper-V environment, assigns the hostname and IP addresses through scripts, there was the following problem: The domain join was not possible because the machines used <strong>all</strong> had the same SID. As a result, I received an error message that this was not possible due to the multiple SID.</p><p><strong><em>Possible solution</em></strong>:</p><p>Through research, I came across the integrated tool sysprep. Through a conversation with a colleague at work, the possibility of sysprep was explained to me in more detail, as I was not familiar with it at the time.</p><p>I continued to read and familiarize myself with sysprep and needed several test runs to get the desired result. In addition, it was previously difficult to activate WinRM (Windows Remote Management).</p><p>I had to use a Powershell script to activate WinRM which can be found under the link (https://gist.github.com/tdigangi5/85b0b3bb5f7b35c7b829828928f22cdd). Since I had to run this script every time on a new machine to activate WinRM, it was worth considering putting it in an answer file.</p><p>Through intensive research I found parts for the answer file and will share them with you. This answer file can still be revised and further perfected.</p><p>## <strong>Explanation for the answer file:</strong></p><p>I will briefly explain how to use the answer file and sysprep:</p><ul>  <li>    <p><strong>1st step</strong>: Change the user and password within the answer file, and adjust the path for the PowerShell script for WinRM.</p>  </li>  <li>    <p><strong>2nd step:</strong> Then save the answer file in the sysprep folder. I have named the answer file deploy.xml.</p>    <p>The path is as follows: <strong>“C:\\Windows\\System32\\Sysprep”</strong>.</p>  </li>  <li>    <p>Step 3:** The last step is to open a cmd window and enter the following command:</p>    <pre><code class=\"language-cmd\">  C:\\Windows\\System32\\Sysprep\\sysprep.exe /generalize /shutdown /oobe /unattend: \"C:\\Windows\\System32\\Sysprep\\deploy.xml\" </code></pre>  </li>  <li>    <p><strong>4th step:</strong> As the last step and actually one of the <strong>most important</strong> steps: Do <strong>NOT</strong> boot the virtual machine. The virtual machine should now be exported and only started up after successful export and, if necessary, copying of the virtual machine.</p>  </li></ul><h2 id=\"code-of-the-answer-file\">Code of the answer file</h2><div class=\"language-xml highlighter-rouge\"><div class=\"highlight\"><pre class=\"highlight\"><code><span class=\"cp\">&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;</span><span class=\"nt\">&lt;unattend</span> <span class=\"na\">xmlns=</span><span class=\"s\">\"urn:schemas-microsoft-com:unattend\"</span><span class=\"nt\">&gt;</span>   <span class=\"nt\">&lt;settings</span> <span class=\"na\">pass=</span><span class=\"s\">\"oobeSystem\"</span><span class=\"nt\">&gt;</span>      <span class=\"nt\">&lt;component</span> <span class=\"na\">xmlns:wcm=</span><span class=\"s\">\"http://schemas.microsoft.com/WMIConfig/2002/State\"</span> <span class=\"na\">xmlns:xsi=</span><span class=\"s\">\"http://www.w3.org/2001/XMLSchema-instance\"</span> <span class=\"na\">name=</span><span class=\"s\">\"Microsoft-Windows-Shell-Setup\"</span> <span class=\"na\">processorArchitecture=</span><span class=\"s\">\"amd64\"</span> <span class=\"na\">publicKeyToken=</span><span class=\"s\">\"31bf3856ad364e35\"</span> <span class=\"na\">language=</span><span class=\"s\">\"neutral\"</span> <span class=\"na\">versionScope=</span><span class=\"s\">\"nonSxS\"</span><span class=\"nt\">&gt;</span>         <span class=\"nt\">&lt;UserAccounts&gt;</span>            <span class=\"nt\">&lt;AdministratorPassword&gt;</span>               <span class=\"nt\">&lt;Value&gt;</span>Password12345<span class=\"nt\">&lt;/Value&gt;</span>               <span class=\"nt\">&lt;PlainText&gt;</span>true<span class=\"nt\">&lt;/PlainText&gt;</span>            <span class=\"nt\">&lt;/AdministratorPassword&gt;</span>         <span class=\"nt\">&lt;/UserAccounts&gt;</span>         <span class=\"nt\">&lt;AutoLogon&gt;</span>            <span class=\"nt\">&lt;Username&gt;</span>Administrator<span class=\"nt\">&lt;/Username&gt;</span>            <span class=\"nt\">&lt;Enabled&gt;</span>true<span class=\"nt\">&lt;/Enabled&gt;</span>            <span class=\"nt\">&lt;LogonCount&gt;</span>1<span class=\"nt\">&lt;/LogonCount&gt;</span>            <span class=\"nt\">&lt;Password&gt;</span>               <span class=\"nt\">&lt;Value&gt;</span>Password12345<span class=\"nt\">&lt;/Value&gt;</span>               <span class=\"nt\">&lt;PlainText&gt;</span>true<span class=\"nt\">&lt;/PlainText&gt;</span>            <span class=\"nt\">&lt;/Password&gt;</span>         <span class=\"nt\">&lt;/AutoLogon&gt;</span>         <span class=\"nt\">&lt;FirstLogonCommands&gt;</span>            <span class=\"nt\">&lt;SynchronousCommand</span> <span class=\"na\">wcm:action=</span><span class=\"s\">\"add\"</span><span class=\"nt\">&gt;</span>               <span class=\"nt\">&lt;Order&gt;</span>1<span class=\"nt\">&lt;/Order&gt;</span>               <span class=\"nt\">&lt;CommandLine&gt;</span>reg.exe add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\" /v AutoLogonCount /t REG_DWORD /d 0 /f<span class=\"nt\">&lt;/CommandLine&gt;</span>            <span class=\"nt\">&lt;/SynchronousCommand&gt;</span>            <span class=\"nt\">&lt;SynchronousCommand</span> <span class=\"na\">wcm:action=</span><span class=\"s\">\"add\"</span><span class=\"nt\">&gt;</span>               <span class=\"nt\">&lt;Order&gt;</span>2<span class=\"nt\">&lt;/Order&gt;</span>               <span class=\"nt\">&lt;CommandLine&gt;</span>powershell.exe -File \"C:\\{PathToYourScriptOnTheHost}\\winrm.ps1\"<span class=\"nt\">&lt;/CommandLine&gt;</span>            <span class=\"nt\">&lt;/SynchronousCommand&gt;</span>         <span class=\"nt\">&lt;/FirstLogonCommands&gt;</span>         <span class=\"nt\">&lt;OOBE&gt;</span>            <span class=\"nt\">&lt;HideEULAPage&gt;</span>true<span class=\"nt\">&lt;/HideEULAPage&gt;</span>            <span class=\"nt\">&lt;HideLocalAccountScreen&gt;</span>true<span class=\"nt\">&lt;/HideLocalAccountScreen&gt;</span>            <span class=\"nt\">&lt;HideOEMRegistrationScreen&gt;</span>true<span class=\"nt\">&lt;/HideOEMRegistrationScreen&gt;</span>            <span class=\"nt\">&lt;HideOnlineAccountScreens&gt;</span>true<span class=\"nt\">&lt;/HideOnlineAccountScreens&gt;</span>            <span class=\"nt\">&lt;HideWirelessSetupInOOBE&gt;</span>true<span class=\"nt\">&lt;/HideWirelessSetupInOOBE&gt;</span>            <span class=\"nt\">&lt;NetworkLocation&gt;</span>Other<span class=\"nt\">&lt;/NetworkLocation&gt;</span>            <span class=\"nt\">&lt;ProtectYourPC&gt;</span>3<span class=\"nt\">&lt;/ProtectYourPC&gt;</span>            <span class=\"nt\">&lt;SkipMachineOOBE&gt;</span>true<span class=\"nt\">&lt;/SkipMachineOOBE&gt;</span>            <span class=\"nt\">&lt;SkipUserOOBE&gt;</span>true<span class=\"nt\">&lt;/SkipUserOOBE&gt;</span>            <span class=\"nt\">&lt;UnattendEnableRetailDemo&gt;</span>false<span class=\"nt\">&lt;/UnattendEnableRetailDemo&gt;</span>         <span class=\"nt\">&lt;/OOBE&gt;</span>      <span class=\"nt\">&lt;/component&gt;</span>   <span class=\"nt\">&lt;/settings&gt;</span><span class=\"nt\">&lt;/unattend&gt;</span></code></pre></div></div><p>Thanks for reading my blog.</p>",
+            "url": "https://devopsenqineer.github.io/blog/2024/03/16/sysprep-for-automation",
+            
+            
+            
+            
+            
+            "date_published": "2024-03-16T00:00:00+01:00",
+            "date_modified": "2024-03-16T00:00:00+01:00",
+            
+                "author":  {
+                "name": "devopsenqineer",
+                "url": null,
+                "avatar": null
+                }
+                
+            
+        },
+    
+        {
+            "id": "https://devopsenqineer.github.io/blog/2024/03/10/ansible-introduction",
+            "title": "introduction into ansible",
+            "summary": "introduction for ansible",
+            "content_text": "Ansible - IntroductionAnsible is an open source tool for the automation of the configuration and management of computer systems. Here are some easy points to understand:      Automation: Ansible can automate repetitive tasks, such as the installation of software on a computer.        Configuration management: Ansible can manage and change the settings on a computer.        Simplicity: Ansible uses the simple YAML language.        No additional software required: Ansible has no need for additional software on the computers it manages. Ansible uses existing technologies such as OpenSSH and Python.  Ansible’s approach:To automate tasks on computers or servers, Ansible works in a series of steps:      Connect to nodes: Ansible connects to nodes (called hosts). Nodes are the target endpoints. They can be servers, network devices, or any computer you want to manage with Ansible.        Transfer modules: Ansible pushes small programs, called modules, to these nodes. These modules are used to perform automation tasks in Ansible.        Running modules: Ansible executes the modules and removes them when the execution is complete. These programs are written as resource models for the desired state of the system.        Agentless automation: Ansible is agentless and can therefore manage nodes without the need to install any software on them. Ansible uses the SSH protocol to connect to servers and perform tasks.  YAMLYAML (Yet Another Markup Language) is the language used for Ansible.I’m going to show you some basic Ansible Tasks. In the future I will delve deeper into Ansible Tasks, Roles and Playbooks in general. And I will teach you how to write your own Windows based Ansible modules.This Task installs the IIS.- name: Install IIS (Web-Server only)  ansible.windows.win_feature:    name: Web-Server    state: presentDocumentation: https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_feature_module.html",
+            "content_html": "<h1 id=\"ansible---introduction\">Ansible - Introduction</h1><p>Ansible is an open source tool for the automation of the configuration and management of computer systems. Here are some easy points to understand:</p><ul>  <li>    <p><strong>Automation</strong>: Ansible can automate repetitive tasks, such as the installation of software on a computer.</p>  </li>  <li>    <p><strong>Configuration management</strong>: Ansible can manage and change the settings on a computer.</p>  </li>  <li>    <p><strong>Simplicity</strong>: Ansible uses the simple YAML language.</p>  </li>  <li>    <p><strong>No additional software required</strong>: Ansible has no need for additional software on the computers it manages. Ansible uses existing technologies such as OpenSSH and Python.</p>  </li></ul><h3 id=\"ansibles-approach\">Ansible’s approach:</h3><p>To automate tasks on computers or servers, Ansible works in a series of steps:</p><ul>  <li>    <p><strong>Connect to nodes</strong>: Ansible connects to nodes (called hosts). Nodes are the target endpoints. They can be servers, network devices, or any computer you want to manage with Ansible.</p>  </li>  <li>    <p><strong>Transfer modules</strong>: Ansible pushes small programs, called modules, to these nodes. These modules are used to perform automation tasks in Ansible.</p>  </li>  <li>    <p><strong>Running modules</strong>: Ansible executes the modules and removes them when the execution is complete. These programs are written as resource models for the desired state of the system.</p>  </li>  <li>    <p><strong>Agentless automation</strong>: Ansible is agentless and can therefore manage nodes without the need to install any software on them. Ansible uses the SSH protocol to connect to servers and perform tasks.</p>  </li></ul><h3 id=\"yaml\">YAML</h3><p>YAML (<strong>Yet Another Markup Language</strong>) is the language used for Ansible.</p><p>I’m going to show you some basic Ansible Tasks. In the future I will delve deeper into Ansible Tasks, Roles and Playbooks in general. And I will teach you how to write your own Windows based Ansible modules.</p><p>This Task installs the IIS.</p><div class=\"language-yaml highlighter-rouge\"><div class=\"highlight\"><pre class=\"highlight\"><code><span class=\"pi\">-</span> <span class=\"na\">name</span><span class=\"pi\">:</span> <span class=\"s\">Install IIS (Web-Server only)</span>  <span class=\"na\">ansible.windows.win_feature</span><span class=\"pi\">:</span>    <span class=\"na\">name</span><span class=\"pi\">:</span> <span class=\"s\">Web-Server</span>    <span class=\"na\">state</span><span class=\"pi\">:</span> <span class=\"s\">present</span></code></pre></div></div><p>Documentation: https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_feature_module.html</p>",
+            "url": "https://devopsenqineer.github.io/blog/2024/03/10/ansible-introduction",
+            
+            
+            
+            
+            
+            "date_published": "2024-03-10T00:00:00+01:00",
+            "date_modified": "2024-03-10T00:00:00+01:00",
+            
+                "author":  {
+                "name": "devopsenqineer",
+                "url": null,
+                "avatar": null
+                }
+                
+            
+        },
+    
+        {
+            "id": "https://devopsenqineer.github.io/blog/2024/03/05/roadmap-blog-topics",
+            "title": "roadmap about the blog topics",
+            "summary": "roadmap for my blog",
+            "content_text": "Roadmap for my blogI will share with you my Roadmap for this Blog and i will link here the related posts.  Ansible Tutorials  Terraform Tutorials  Azure Tutorials",
+            "content_html": "<h1 id=\"roadmap-for-my-blog\">Roadmap for my blog</h1><p>I will share with you my Roadmap for this Blog and i will link here the related posts.</p><ul>  <li>Ansible Tutorials</li>  <li>Terraform Tutorials</li>  <li>Azure Tutorials</li></ul>",
+            "url": "https://devopsenqineer.github.io/blog/2024/03/05/roadmap-blog-topics",
+            
+            
+            
+            
+            
+            "date_published": "2024-03-05T00:00:00+01:00",
+            "date_modified": "2024-03-05T00:00:00+01:00",
+            
+                "author":  {
+                "name": "devopsenqineer",
+                "url": null,
+                "avatar": null
+                }
+                
+            
+        },
+    
+        {
+            "id": "https://devopsenqineer.github.io/blog/2024/03/05/my-tech-stack",
+            "title": "tech stack",
+            "summary": "tech stack",
+            "content_text": "summary of my tech stackI will share with you my tech stack. I am proficient in the following technologies:  Ansible (advanced)  Terraform (beginner)  Powershell (beginner)  Azure Cloud (beginner)In the course of my career I will do my best to be advanced in each of the technologies.I also want to and will learn new technologies.",
+            "content_html": "<h1 id=\"summary-of-my-tech-stack\">summary of my tech stack</h1><p>I will share with you my tech stack. I am proficient in the following technologies:</p><ul>  <li>Ansible (advanced)</li>  <li>Terraform (beginner)</li>  <li>Powershell (beginner)</li>  <li>Azure Cloud (beginner)</li></ul><p>In the course of my career I will do my best to be advanced in each of the technologies.</p><p>I also want to and will learn new technologies.</p>",
+            "url": "https://devopsenqineer.github.io/blog/2024/03/05/my-tech-stack",
+            
+            
+            
+            
+            
+            "date_published": "2024-03-05T00:00:00+01:00",
+            "date_modified": "2024-03-05T00:00:00+01:00",
+            
+                "author":  {
+                "name": "devopsenqineer",
+                "url": null,
+                "avatar": null
+                }
+                
+            
+        },
+    
+        {
+            "id": "https://devopsenqineer.github.io/blog/2024/03/05/introduction-to-my-blog",
+            "title": "Introduction to my blog",
+            "summary": "introduction to my blog included the topics i will write about",
+            "content_text": " IntroductionThis is my first blogpost.My name is devopsenqineer. I am currently a junior devops engineer in a company that does digitalisation and archiving of patient data. The team I am part of runs the production software.The production software processes patient data and is therefore a critical and essential process for the whole company.As part of my job, I am responsible for the staging environment. I use Terraform, Ansible and Powershell.I automate within the Azure cloud and occasionally on prem. I also give training on specific subjects. I like to work with the latest technology.In my blog I will write about automation in general, but also about technologies like Ansible or Terraform.I will also write about DevOps in general and about the Azure cloud. I will be creating tutorial series from time to time and making them available here.If there are any other topics that I am interested in, I will of course write about them as well.",
+            "content_html": "<p><img src=\"https://imgur.com/a/FcEVEnV\" alt=\"\" /><em><a href=\"https://imgur.com/a/FcEVEnV\"></a> <a href=\"https://imgur.com/a/FcEVEnV\"></a></em></p><h1 id=\"introduction\">Introduction</h1><p>This is my first blogpost.</p><p>My name is devopsenqineer. I am currently a junior devops engineer in a company that does digitalisation and archiving of patient data. The team I am part of runs the production software.</p><p>The production software processes patient data and is therefore a critical and essential process for the whole company.</p><p>As part of my job, I am responsible for the staging environment. I use Terraform, Ansible and Powershell.</p><p>I automate within the Azure cloud and occasionally on prem. I also give training on specific subjects. I like to work with the latest technology.</p><p>In my blog I will write about automation in general, but also about technologies like Ansible or Terraform.</p><p>I will also write about DevOps in general and about the Azure cloud. I will be creating tutorial series from time to time and making them available here.</p><p>If there are any other topics that I am interested in, I will of course write about them as well.</p>",
+            "url": "https://devopsenqineer.github.io/blog/2024/03/05/introduction-to-my-blog",
+            
+            
+            
+            
+            
+            "date_published": "2024-03-05T00:00:00+01:00",
+            "date_modified": "2024-03-05T00:00:00+01:00",
+            
+                "author":  {
+                "name": "devopsenqineer",
+                "url": null,
+                "avatar": null
+                }
+                
+            
+        }
+    
+    ]
+}
