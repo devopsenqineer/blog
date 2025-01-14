@@ -40,6 +40,10 @@ jobs:
           sudo apt-get install -y build-essential libxslt1-dev libsqlite3-dev
           sudo apt-get install -y rbenv ruby-build
 
+      - name: Update ruby-build
+        run: |
+          cd $(rbenv root)/plugins/ruby-build && git pull
+
       - name: Install Ruby 3.1.4
         run: |
           rbenv install 3.1.4
