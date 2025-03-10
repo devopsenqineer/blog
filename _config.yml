@@ -48,6 +48,11 @@ exclude:
   - LICENSE.md
   - README.md
   - CONTRIBUTING.md
+  - vendor
+  - vendor/bundle
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
   
 compress_html:
   clippings: all
