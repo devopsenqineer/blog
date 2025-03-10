@@ -1,0 +1,29 @@
+---
+layout: default
+title: Diagnostics
+permalink: /diagnostics/
+---
+
+<h1>Jekyll Diagnostics</h1>
+
+<h2>Site Configuration</h2>
+<ul>
+  <li>site.url: {{ site.url }}</li>
+  <li>site.baseurl: {{ site.baseurl }}</li>
+  <li>Jekyll Version: {{ jekyll.version }}</li>
+</ul>
+
+<h2>Page Information</h2>
+<ul>
+  <li>page.url: {{ page.url }}</li>
+  <li>page.path: {{ page.path }}</li>
+</ul>
+
+<h2>All Pages</h2>
+<ul>
+{% for p in site.pages %}
+  <li>
+    {{ p.url }} ({{ p.path }})
+  </li>
+{% endfor %}
+</ul>
