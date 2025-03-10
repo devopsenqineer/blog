@@ -24,10 +24,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1 # Neueste Version verwenden
+        uses: ruby/setup-ruby@v1  # Neueste Version verwenden
         with:
-          ruby-version: '3.1' # Version, die du benötigst
-          bundler-cache: true # Runs 'bundle install' und cached Bundler automatisch
+          ruby-version: '3.1'   # Version, die du benötigst
+          bundler-cache: true   # Führt 'bundle install' aus und cached Bundler automatisch
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
