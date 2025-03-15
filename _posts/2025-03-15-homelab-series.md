@@ -66,7 +66,7 @@ I've successfully run the following virtualized environments simultaneously:
 - Ubuntu Server VM running Docker (8+ containers)
 - Windows 10 VM for testing
 - pfSense VM for network experimentation
-- Kubernetes single-node cluster for container orchestration
+- Kubernetes single-node cluster for container orchestration learning
 
 #### Noise Profile
 
@@ -148,3 +148,7 @@ What hardware powers your homelab? I'd love to hear about your setup in the comm
 ---
 
 *This blog post is part of my ongoing Homelab Series, where I share detailed insights into my personal lab environment. Stay tuned for upcoming posts on virtualization, networking, security, and DevOps automation.*
+
+Check also my Post on Medium: 
+
+https://medium.com/@devopsenqineer/how-to-build-a-homelab-in-2025-3b551baef38f
